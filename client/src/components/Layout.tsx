@@ -50,8 +50,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             F
           </div>
           <div>
-            <h1 className="font-display font-bold text-lg leading-tight">FDMS</h1>
-            <p className="text-xs text-muted-foreground">نظام إدارة بيانات العائلة</p>
+            <h1 className="font-display font-bold text-lg leading-tight">نظام إدارة بيانات العائلة</h1>
           </div>
         </div>
       </div>
@@ -123,7 +122,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white font-bold text-sm">
               F
             </div>
-            <span className="font-display font-bold">FDMS</span>
+            <span className="font-display font-bold">نظام إدارة بيانات العائلة</span>
           </div>
           <Button variant="ghost" size="icon" onClick={() => setIsMobileOpen(true)}>
             <Menu className="w-6 h-6" />
