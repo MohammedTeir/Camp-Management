@@ -19,14 +19,14 @@ export default function Dashboard() {
 
   // Mock data for charts since the backend returns simple counts
   const genderData = [
-    { name: 'Boys', value: stats ? Math.floor(stats.totalChildren * 0.52) : 0 },
-    { name: 'Girls', value: stats ? Math.floor(stats.totalChildren * 0.48) : 0 },
+    { name: 'أولاد', value: stats ? Math.floor(stats.totalChildren * 0.52) : 0 },
+    { name: 'بنات', value: stats ? Math.floor(stats.totalChildren * 0.48) : 0 },
   ];
 
   const pregnancyData = [
-    { name: '1-3 Months', count: 12 },
-    { name: '4-6 Months', count: 28 },
-    { name: '7-9 Months', count: 15 },
+    { name: '1-3 أشهر', count: 12 },
+    { name: '4-6 أشهر', count: 28 },
+    { name: '7-9 أشهر', count: 15 },
   ];
 
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
@@ -97,7 +97,7 @@ export default function Dashboard() {
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
         <Card className="col-span-4 shadow-md">
           <CardHeader>
-            <CardTitle>Pregnancy Trimester Distribution</CardTitle>
+            <CardTitle>توزيع أشهر الحمل</CardTitle>
           </CardHeader>
           <CardContent className="pl-2">
             <ResponsiveContainer width="100%" height={350}>
@@ -116,6 +116,7 @@ export default function Dashboard() {
                   tickLine={false} 
                   axisLine={false} 
                   tickFormatter={(value) => `${value}`} 
+                  orientation="right"
                 />
                 <Tooltip 
                   cursor={{ fill: 'transparent' }}
@@ -129,7 +130,7 @@ export default function Dashboard() {
 
         <Card className="col-span-3 shadow-md">
           <CardHeader>
-            <CardTitle>Child Gender Ratio</CardTitle>
+            <CardTitle>نسبة جنس الأطفال</CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={350}>
@@ -153,11 +154,11 @@ export default function Dashboard() {
             <div className="flex justify-center gap-6 mt-4">
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-full bg-[#0088FE]" />
-                <span className="text-sm font-medium">Boys ({Math.round(genderData[0].value / (genderData[0].value + genderData[1].value) * 100)}%)</span>
+                <span className="text-sm font-medium">أولاد ({Math.round(genderData[0].value / (genderData[0].value + genderData[1].value) * 100)}%)</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-full bg-[#00C49F]" />
-                <span className="text-sm font-medium">Girls ({Math.round(genderData[1].value / (genderData[0].value + genderData[1].value) * 100)}%)</span>
+                <span className="text-sm font-medium">بنات ({Math.round(genderData[1].value / (genderData[0].value + genderData[1].value) * 100)}%)</span>
               </div>
             </div>
           </CardContent>

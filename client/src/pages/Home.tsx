@@ -58,31 +58,31 @@ export default function Home() {
       <div className="space-y-6">
         {activeTab === "children" && lookupId && (
           <div className="space-y-4">
-            <h2 className="text-2xl font-bold">Search Results</h2>
+            <h2 className="text-2xl font-bold">نتائج البحث</h2>
             {loadingChildren ? (
-              <div className="text-center py-12 text-muted-foreground">Searching database...</div>
+              <div className="text-center py-12 text-muted-foreground">جاري البحث في قاعدة البيانات...</div>
             ) : children && children.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {children.map((child) => (
-                  <Card key={child.id} className="hover:shadow-md transition-shadow border-l-4 border-l-primary">
+                  <Card key={child.id} className="hover:shadow-md transition-shadow border-r-4 border-r-primary">
                     <CardHeader className="pb-2">
                       <div className="flex justify-between items-start">
                         <CardTitle className="text-lg font-display text-primary">{child.fullName}</CardTitle>
                         <Baby className="w-5 h-5 text-muted-foreground" />
                       </div>
-                      <CardDescription>ID: {child.idNumber}</CardDescription>
+                      <CardDescription>الهوية: {child.idNumber}</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-2 text-sm">
                       <div className="flex justify-between py-1 border-b border-border/50">
-                        <span className="text-muted-foreground">Date of Birth</span>
+                        <span className="text-muted-foreground">تاريخ الميلاد</span>
                         <span className="font-medium">{child.dateOfBirth}</span>
                       </div>
                       <div className="flex justify-between py-1 border-b border-border/50">
-                        <span className="text-muted-foreground">Gender</span>
-                        <span className="font-medium capitalize">{child.gender}</span>
+                        <span className="text-muted-foreground">الجنس</span>
+                        <span className="font-medium capitalize">{child.gender === 'male' ? 'ذكر' : 'أنثى'}</span>
                       </div>
                       <div className="flex justify-between py-1 border-b border-border/50">
-                        <span className="text-muted-foreground">Status</span>
+                        <span className="text-muted-foreground">الحالة</span>
                         <span className="font-medium px-2 py-0.5 rounded-full bg-secondary text-secondary-foreground text-xs">
                           {child.healthStatus}
                         </span>
@@ -99,8 +99,8 @@ export default function Home() {
             ) : (
               <div className="text-center py-12 bg-muted/30 rounded-xl border border-dashed border-muted-foreground/30">
                 <AlertCircle className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-                <h3 className="text-lg font-medium text-foreground">No records found</h3>
-                <p className="text-muted-foreground">Try checking the ID number and trying again.</p>
+                <h3 className="text-lg font-medium text-foreground">لم يتم العثور على سجلات</h3>
+                <p className="text-muted-foreground">حاول التحقق من رقم الهوية والمحاولة مرة أخرى.</p>
               </div>
             )}
           </div>
@@ -108,31 +108,31 @@ export default function Home() {
 
         {activeTab === "women" && lookupId && (
           <div className="space-y-4">
-            <h2 className="text-2xl font-bold">Search Results</h2>
+            <h2 className="text-2xl font-bold">نتائج البحث</h2>
             {loadingWomen ? (
-              <div className="text-center py-12 text-muted-foreground">Searching database...</div>
+              <div className="text-center py-12 text-muted-foreground">جاري البحث في قاعدة البيانات...</div>
             ) : women && women.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {women.map((woman) => (
-                  <Card key={woman.id} className="hover:shadow-md transition-shadow border-l-4 border-l-accent">
+                  <Card key={woman.id} className="hover:shadow-md transition-shadow border-r-4 border-r-accent">
                     <CardHeader className="pb-2">
                       <div className="flex justify-between items-start">
                         <CardTitle className="text-lg font-display text-accent">{woman.fullName}</CardTitle>
                         <User className="w-5 h-5 text-muted-foreground" />
                       </div>
-                      <CardDescription>ID: {woman.idNumber}</CardDescription>
+                      <CardDescription>الهوية: {woman.idNumber}</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-2 text-sm">
                       <div className="flex justify-between py-1 border-b border-border/50">
-                        <span className="text-muted-foreground">Spouse</span>
+                        <span className="text-muted-foreground">الزوج</span>
                         <span className="font-medium">{woman.spouseName}</span>
                       </div>
                       <div className="flex justify-between py-1 border-b border-border/50">
-                        <span className="text-muted-foreground">Pregnancy Month</span>
+                        <span className="text-muted-foreground">شهر الحمل</span>
                         <span className="font-medium">{woman.pregnancyMonth}</span>
                       </div>
                       <div className="flex justify-between py-1 border-b border-border/50">
-                        <span className="text-muted-foreground">Health Status</span>
+                        <span className="text-muted-foreground">الحالة الصحية</span>
                         <span className="font-medium px-2 py-0.5 rounded-full bg-secondary text-secondary-foreground text-xs">
                           {woman.healthStatus}
                         </span>
@@ -149,8 +149,8 @@ export default function Home() {
             ) : (
               <div className="text-center py-12 bg-muted/30 rounded-xl border border-dashed border-muted-foreground/30">
                 <AlertCircle className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-                <h3 className="text-lg font-medium text-foreground">No records found</h3>
-                <p className="text-muted-foreground">Try checking the ID number and trying again.</p>
+                <h3 className="text-lg font-medium text-foreground">لم يتم العثور على سجلات</h3>
+                <p className="text-muted-foreground">حاول التحقق من رقم الهوية والمحاولة مرة أخرى.</p>
               </div>
             )}
           </div>
@@ -161,8 +161,8 @@ export default function Home() {
       {!lookupId && (
         <div className="relative rounded-3xl overflow-hidden mt-12 aspect-[21/9] shadow-xl">
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10 flex flex-col justify-end p-8 text-white">
-            <h3 className="text-2xl font-bold font-display">Healthcare for Everyone</h3>
-            <p className="max-w-lg opacity-90">Providing essential data management for camps to ensure every child and mother receives the care they deserve.</p>
+            <h3 className="text-2xl font-bold font-display">الرعاية الصحية للجميع</h3>
+            <p className="max-w-lg opacity-90">توفير إدارة البيانات الأساسية للمخيمات لضمان حصول كل طفل وأم على الرعاية التي يستحقونها.</p>
           </div>
           {/* Medical camp setting or community health */}
           <img 
