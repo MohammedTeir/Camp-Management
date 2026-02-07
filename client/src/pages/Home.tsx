@@ -25,10 +25,10 @@ export default function Home() {
     <div className="space-y-8">
       <div className="text-center max-w-2xl mx-auto space-y-4 pt-8">
         <h1 className="text-4xl md:text-5xl font-display font-bold text-foreground">
-          Family Data <span className="text-gradient">Lookup</span>
+          بيانات العائلة <span className="text-gradient">بحث</span>
         </h1>
         <p className="text-lg text-muted-foreground">
-          Access health records for children and maternal care by entering your Family ID, National ID, or Spouse ID.
+          الوصول إلى السجلات الصحية للأطفال والرعاية الأمومية عن طريق إدخال رقم هوية العائلة أو الرقم الوطني أو رقم هوية الزوج.
         </p>
       </div>
 
@@ -36,13 +36,13 @@ export default function Home() {
         <CardContent className="pt-6">
           <Tabs defaultValue="children" onValueChange={(val) => { setActiveTab(val); setSearchId(""); setLookupId(""); }}>
             <TabsList className="grid w-full grid-cols-2 mb-6">
-              <TabsTrigger value="children">Find Child Records</TabsTrigger>
-              <TabsTrigger value="women">Find Maternal Records</TabsTrigger>
+              <TabsTrigger value="children">سجلات الأطفال</TabsTrigger>
+              <TabsTrigger value="women">سجلات الأمهات</TabsTrigger>
             </TabsList>
 
             <form onSubmit={handleSearch} className="flex gap-2">
               <Input
-                placeholder={activeTab === "children" ? "Enter Father or Mother ID..." : "Enter Husband or Wife ID..."}
+                placeholder={activeTab === "children" ? "أدخل رقم هوية الأب أو الأم..." : "أدخل رقم هوية الزوج أو الزوجة..."}
                 value={searchId}
                 onChange={(e) => setSearchId(e.target.value)}
                 className="h-12 text-lg"

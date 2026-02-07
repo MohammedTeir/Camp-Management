@@ -63,31 +63,31 @@ export default function Dashboard() {
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-3xl font-bold font-display tracking-tight">Dashboard Overview</h2>
-        <p className="text-muted-foreground">Welcome back. Here's what's happening in the camps today.</p>
+        <h2 className="text-3xl font-bold font-display tracking-tight">نظرة عامة على لوحة التحكم</h2>
+        <p className="text-muted-foreground">أهلاً بك مجدداً. إليك ما يحدث في المخيمات اليوم.</p>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         <StatCard 
-          title="Total Children" 
+          title="إجمالي الأطفال" 
           value={stats.totalChildren} 
           icon={Baby} 
           color="hsl(var(--primary))" 
         />
         <StatCard 
-          title="Pregnant Women" 
+          title="النساء الحوامل" 
           value={stats.totalPregnant} 
           icon={Users} 
           color="hsl(var(--accent))" 
         />
         <StatCard 
-          title="Active Camps" 
+          title="المخيمات النشطة" 
           value={stats.totalCamps} 
           icon={Tent} 
           color="#10b981" 
         />
         <StatCard 
-          title="Critical Cases" 
+          title="الحالات الحرجة" 
           value="12" 
           icon={Activity} 
           color="hsl(var(--destructive))" 
