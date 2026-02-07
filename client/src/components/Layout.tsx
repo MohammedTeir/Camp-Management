@@ -1,0 +1,141 @@
+import { Link, useLocation } from "wouter";
+import { useAuth } from "@/hooks/use-auth";
+import { Button } from "@/components/ui/button";
+import { 
+  Home, 
+  Baby, 
+  Users, 
+  Settings, 
+  LogOut, 
+  LayoutDashboard, 
+  Tent,
+  Menu,
+  X,
+  LogIn
+} from "lucide-react";
+import { useState } from "react";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+
+export default function Layout({ children }: { children: React.ReactNode }) {
+  const { user, logout } = useAuth();
+  const [location] = useLocation();
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
+
+  const NavLink = ({ href, icon: Icon, label }: { href: string; icon: any; label: string }) => {
+    const isActive = location === href;
+    return (
+      <Link href={href}>
+        <div 
+          className={`
+            flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 cursor-pointer
+            ${isActive 
+              ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25 font-semibold" 
+              : "text-muted-foreground hover:bg-secondary hover:text-secondary-foreground"
+            }
+          `}
+          onClick={() => setIsMobileOpen(false)}
+        >
+          <Icon className="w-5 h-5" />
+          <span>{label}</span>
+        </div>
+      </Link>
+    );
+  };
+
+  const SidebarContent = () => (
+    <div className="flex flex-col h-full">
+      <div className="p-6 border-b border-border/50">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white font-bold text-xl shadow-lg">
+            F
+          </div>
+          <div>
+            <h1 className="font-display font-bold text-lg leading-tight">Family Data</h1>
+            <p className="text-xs text-muted-foreground">Management System</p>
+          </div>
+        </div>
+      </div>
+
+      <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+        <NavLink href="/" icon={Home} label="Home & Lookup" />
+        <div className="my-4 border-t border-border/50" />
+        
+        {user ? (
+          <>
+            <p className="px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Admin</p>
+            <NavLink href="/dashboard" icon={LayoutDashboard} label="Dashboard" />
+            <NavLink href="/children" icon={Baby} label="Children Records" />
+            <NavLink href="/pregnant-women" icon={Users} label="Maternal Records" />
+            <NavLink href="/camps" icon={Tent} label="Camp Management" />
+            <div className="my-4 border-t border-border/50" />
+            <NavLink href="/settings" icon={Settings} label="Settings" />
+          </>
+        ) : (
+          <>
+            <p className="px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Public</p>
+            <NavLink href="/login" icon={LogIn} label="Admin Login" />
+          </>
+        )}
+      </nav>
+
+      {user && (
+        <div className="p-4 border-t border-border/50 bg-secondary/30">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
+              {user.username.charAt(0).toUpperCase()}
+            </div>
+            <div className="overflow-hidden">
+              <p className="text-sm font-semibold truncate">{user.fullName}</p>
+              <p className="text-xs text-muted-foreground capitalize">{user.role}</p>
+            </div>
+          </div>
+          <Button 
+            variant="outline" 
+            className="w-full justify-start gap-2 text-destructive hover:text-destructive hover:bg-destructive/10 border-destructive/20"
+            onClick={() => logout()}
+          >
+            <LogOut className="w-4 h-4" />
+            Sign Out
+          </Button>
+        </div>
+      )}
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen bg-muted/30 flex">
+      {/* Desktop Sidebar */}
+      <aside className="hidden lg:block w-72 bg-card border-r border-border shadow-sm sticky top-0 h-screen z-30">
+        <SidebarContent />
+      </aside>
+
+      {/* Mobile Sidebar */}
+      <Sheet open={isMobileOpen} onOpenChange={setIsMobileOpen}>
+        <SheetContent side="left" className="p-0 w-80">
+          <SidebarContent />
+        </SheetContent>
+      </Sheet>
+
+      {/* Main Content */}
+      <main className="flex-1 min-w-0">
+        <header className="lg:hidden h-16 bg-card border-b border-border flex items-center px-4 justify-between sticky top-0 z-20">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white font-bold text-sm">
+              F
+            </div>
+            <span className="font-display font-bold">FDMS</span>
+          </div>
+          <SheetTrigger asChild onClick={() => setIsMobileOpen(true)}>
+            <Button variant="ghost" size="icon">
+              <Menu className="w-6 h-6" />
+            </Button>
+          </SheetTrigger>
+        </header>
+
+        <div className="p-4 md:p-8 max-w-7xl mx-auto animate-in-up">
+          {children}
+        </div>
+      </main>
+    </div>
+  );
+}
