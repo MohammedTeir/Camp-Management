@@ -50,8 +50,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             F
           </div>
           <div>
-            <h1 className="font-display font-bold text-lg leading-tight">Family Data</h1>
-            <p className="text-xs text-muted-foreground">Management System</p>
+            <h1 className="font-display font-bold text-lg leading-tight">FDMS</h1>
+            <p className="text-xs text-muted-foreground">نظام إدارة بيانات العائلة</p>
           </div>
         </div>
       </div>
@@ -82,10 +82,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <div className="p-4 border-t border-border/50 bg-secondary/30">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
-              {user.username.charAt(0).toUpperCase()}
+              {(user.firstName || 'A').charAt(0).toUpperCase()}
             </div>
             <div className="overflow-hidden">
-              <p className="text-sm font-semibold truncate">{user.fullName}</p>
+              <p className="text-sm font-semibold truncate">{user.firstName} {user.lastName}</p>
               <p className="text-xs text-muted-foreground capitalize">{user.role}</p>
             </div>
           </div>
@@ -95,7 +95,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             onClick={() => logout()}
           >
             <LogOut className="w-4 h-4" />
-            Sign Out
+            تسجيل الخروج
           </Button>
         </div>
       )}

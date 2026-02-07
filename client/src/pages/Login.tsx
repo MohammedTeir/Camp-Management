@@ -29,19 +29,19 @@ export default function Login() {
           <div className="mx-auto w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4 text-primary">
             <LogIn className="w-6 h-6" />
           </div>
-          <CardTitle className="text-2xl font-bold font-display">Admin Access</CardTitle>
+          <CardTitle className="text-2xl font-bold font-display">دخول المسؤول</CardTitle>
           <CardDescription>
-            Log in to manage camp data and records
+            سجل الدخول لإدارة بيانات المخيم والسجلات
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="username">Username</Label>
+              <Label htmlFor="username">اسم المستخدم</Label>
               <Input
                 id="username"
                 type="text"
-                placeholder="admin"
+                placeholder="اسم المستخدم"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
@@ -49,7 +49,7 @@ export default function Login() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">كلمة المرور</Label>
               <Input
                 id="password"
                 type="password"
@@ -61,11 +61,11 @@ export default function Login() {
               />
             </div>
             <Button type="submit" className="w-full h-11 text-base" disabled={isLoggingIn}>
-              {isLoggingIn ? "Authenticating..." : "Sign In"}
+              {isLoggingIn ? "جاري التحقق..." : "تسجيل الدخول"}
             </Button>
             
             <div className="text-center text-sm text-muted-foreground">
-              <p>For household heads, use the Lookup tool on the home page.</p>
+              <p>لرؤساء الأسر، استخدم أداة البحث في الصفحة الرئيسية.</p>
             </div>
           </form>
         </CardContent>
