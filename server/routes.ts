@@ -3,7 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { api, errorSchemas } from "@shared/routes";
 import { z } from "zod";
-import { setupAuth, registerAuthRoutes, isAuthenticated } from "./replit_integrations/auth";
+import { setupAuth, registerAuthRoutes, isAuthenticated, registerJwtRoutes } from "./auth_system/auth";
 
 export async function registerRoutes(
   httpServer: Server,
@@ -12,6 +12,7 @@ export async function registerRoutes(
   // Setup Authentication
   await setupAuth(app);
   registerAuthRoutes(app);
+  registerJwtRoutes(app);
 
   // Stats Dashboard
   app.get(api.stats.dashboard.path, isAuthenticated, async (req, res) => {
@@ -19,14 +20,14 @@ export async function registerRoutes(
       const children = await storage.getChildren();
       const pregnantWomen = await storage.getPregnantWomen();
       const camps = await storage.getCamps();
-      
+
       const stats = {
         totalChildren: children.length,
         totalMothers: children.filter(c => c.isBreastfeeding).length,
         totalPregnant: pregnantWomen.length,
         totalCamps: camps.length,
       };
-      
+
       res.json(stats);
     } catch (err) {
       res.status(500).json({ message: "Failed to fetch stats" });

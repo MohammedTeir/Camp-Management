@@ -26,7 +26,7 @@ Preferred communication style: Simple, everyday language.
 ### Backend
 - **Framework**: Express.js running on Node with TypeScript (tsx for dev, esbuild for production)
 - **API Design**: RESTful JSON API under `/api/` prefix. Route definitions are shared between client and server via `shared/routes.ts` using Zod schemas for validation
-- **Authentication**: Replit Auth (OpenID Connect) with Passport.js. Sessions stored in PostgreSQL via `connect-pg-simple`. Auth middleware lives in `server/replit_integrations/auth/`
+- **Authentication**: JWT-based authentication with username/password. Auth middleware lives in `server/auth_system/auth/`
 - **Protected Routes**: Server routes use `isAuthenticated` middleware; client uses a `ProtectedRoute` wrapper component that redirects to `/login`
 
 ### Shared Code (`shared/`)
