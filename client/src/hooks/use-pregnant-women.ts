@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api, buildUrl, type InsertPregnantWoman } from "@shared/routes";
 import { useToast } from "@/hooks/use-toast";
+import { getAccessToken } from "@/lib/auth-utils";
 
 export function usePregnantWomen() {
   const queryClient = useQueryClient();
@@ -9,7 +10,14 @@ export function usePregnantWomen() {
   const womenQuery = useQuery({
     queryKey: [api.pregnantWomen.list.path],
     queryFn: async () => {
-      const res = await fetch(api.pregnantWomen.list.path, { credentials: "include" });
+      const token = getAccessToken();
+      const headers: HeadersInit = {};
+      
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
+      }
+      
+      const res = await fetch(api.pregnantWomen.list.path, { headers });
       if (!res.ok) throw new Error("Failed to fetch records");
       return api.pregnantWomen.list.responses[200].parse(await res.json());
     }
@@ -17,13 +25,19 @@ export function usePregnantWomen() {
 
   const createWomanMutation = useMutation({
     mutationFn: async (data: InsertPregnantWoman) => {
+      const token = getAccessToken();
+      const headers: HeadersInit = { "Content-Type": "application/json" };
+      
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
+      }
+      
       const res = await fetch(api.pregnantWomen.create.path, {
         method: api.pregnantWomen.create.method,
-        headers: { "Content-Type": "application/json" },
+        headers,
         body: JSON.stringify(data),
-        credentials: "include",
       });
-      
+
       if (!res.ok) {
         if (res.status === 400) {
           const error = api.pregnantWomen.create.responses[400].parse(await res.json());
@@ -35,48 +49,61 @@ export function usePregnantWomen() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [api.pregnantWomen.list.path] });
-      toast({ title: "Success", description: "Record created successfully" });
+      toast({ title: "تم بنجاح", description: "تم تسجيل المرأة الحامل بنجاح" });
     },
     onError: (error) => {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
+      toast({ title: "حدث خطأ", description: error.message, variant: "destructive" });
     }
   });
 
   const updateWomanMutation = useMutation({
     mutationFn: async ({ id, ...data }: { id: number } & Partial<InsertPregnantWoman>) => {
+      const token = getAccessToken();
       const url = buildUrl(api.pregnantWomen.update.path, { id });
+      const headers: HeadersInit = { "Content-Type": "application/json" };
+      
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
+      }
+      
       const res = await fetch(url, {
         method: api.pregnantWomen.update.method,
-        headers: { "Content-Type": "application/json" },
+        headers,
         body: JSON.stringify(data),
-        credentials: "include",
       });
-      
+
       if (!res.ok) throw new Error("Failed to update record");
       return api.pregnantWomen.update.responses[200].parse(await res.json());
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [api.pregnantWomen.list.path] });
-      toast({ title: "Success", description: "Record updated successfully" });
+      toast({ title: "تم بنجاح", description: "تم تحديث سجل المرأة الحامل بنجاح" });
     },
     onError: (error) => {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
+      toast({ title: "حدث خطأ", description: error.message, variant: "destructive" });
     }
   });
 
   const deleteWomanMutation = useMutation({
     mutationFn: async (id: number) => {
+      const token = getAccessToken();
       const url = buildUrl(api.pregnantWomen.delete.path, { id });
-      const res = await fetch(url, { 
-        method: api.pregnantWomen.delete.method,
-        credentials: "include" 
-      });
+      const headers: HeadersInit = {};
       
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
+      }
+      
+      const res = await fetch(url, {
+        method: api.pregnantWomen.delete.method,
+        headers
+      });
+
       if (!res.ok) throw new Error("Failed to delete record");
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [api.pregnantWomen.list.path] });
-      toast({ title: "Success", description: "Record deleted" });
+      toast({ title: "تم بنجاح", description: "تم حذف سجل المرأة الحامل" });
     }
   });
 
@@ -98,8 +125,15 @@ export function usePregnantWomanLookup(spouseId: string) {
     queryKey: [api.pregnantWomen.lookup.path, spouseId],
     queryFn: async () => {
       if (!spouseId) return [];
+      const token = getAccessToken();
       const params = new URLSearchParams({ spouseId });
-      const res = await fetch(`${api.pregnantWomen.lookup.path}?${params}`, { credentials: "include" });
+      const headers: HeadersInit = {};
+      
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
+      }
+      
+      const res = await fetch(`${api.pregnantWomen.lookup.path}?${params}`, { headers });
       if (!res.ok) throw new Error("Failed to lookup records");
       return api.pregnantWomen.lookup.responses[200].parse(await res.json());
     },

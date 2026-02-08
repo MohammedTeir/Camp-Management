@@ -1,5 +1,5 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
-import { getAccessToken, setAccessToken, getRefreshToken, redirectToLogin } from "./auth-utils";
+import { getAccessToken, setAccessToken, getRefreshToken, redirectToLogin, removeAccessToken, removeRefreshToken } from "./auth-utils";
 
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
@@ -28,68 +28,54 @@ async function refreshTokens(): Promise<boolean> {
       const data = await res.json();
       setAccessToken(data.accessToken);
       // Optionally update refresh token too
-      // setRefreshToken(data.refreshToken);
+      // setRefreshToken(data.refreshToken); // Keeping the existing comment for now
       return true;
     } else {
       // If refresh fails, remove tokens and redirect to login
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
+      removeAccessToken();
+      removeRefreshToken();
       return false;
     }
   } catch (error) {
     console.error('Token refresh failed:', error);
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
+    removeAccessToken();
+    removeRefreshToken();
     return false;
   }
 }
 
-export async function apiRequest(
-  method: string,
-  url: string,
-  data?: unknown | undefined,
-): Promise<Response> {
+interface FetcherOptions {
+  method?: string;
+  headers?: HeadersInit;
+  body?: unknown;
+  url: string;
+  isRetry?: boolean;
+}
+
+// Unified authenticated fetcher function
+async function authenticatedFetcher({ method = 'GET', headers, body, url, isRetry = false }: FetcherOptions): Promise<Response> {
   let token = getAccessToken();
-  
-  const headers: HeadersInit = {
-    ...(data ? { "Content-Type": "application/json" } : {}),
-  };
-  
+  const authHeaders: HeadersInit = { ...headers };
+
   if (token) {
-    headers.Authorization = `Bearer ${token}`;
+    authHeaders.Authorization = `Bearer ${token}`;
   }
 
   let res = await fetch(url, {
     method,
-    headers,
-    body: data ? JSON.stringify(data) : undefined,
-    // Removed credentials: "include" since we're using JWT
+    headers: authHeaders,
+    body: body ? JSON.stringify(body) : undefined,
   });
 
-  // If we get a 401, try to refresh the token and retry the request
-  if (res.status === 401) {
+  if (res.status === 401 && !isRetry) {
     const refreshed = await refreshTokens();
-    
     if (refreshed) {
-      // Retry the request with the new token
-      const newToken = getAccessToken();
-      const retryHeaders: HeadersInit = {
-        ...(data ? { "Content-Type": "application/json" } : {}),
-      };
-      
-      if (newToken) {
-        retryHeaders.Authorization = `Bearer ${newToken}`;
-      }
-
-      res = await fetch(url, {
-        method,
-        headers: retryHeaders,
-        body: data ? JSON.stringify(data) : undefined,
-      });
+      // Retry the original request with the new token
+      return authenticatedFetcher({ method, headers, body, url, isRetry: true });
     }
   }
 
-  // If still unauthorized after refresh attempt, redirect to login
+  // If still unauthorized after refresh attempt, or if it was a retry and still 401
   if (res.status === 401) {
     redirectToLogin();
     throw new Error('Unauthorized');
@@ -99,64 +85,43 @@ export async function apiRequest(
   return res;
 }
 
+export async function apiRequest(
+  method: string,
+  url: string,
+  data?: unknown | undefined,
+): Promise<Response> {
+  return authenticatedFetcher({ method, url, body: data, headers: { "Content-Type": "application/json" } });
+}
+
 type UnauthorizedBehavior = "returnNull" | "throw";
 export const getQueryFn: <T>(options: {
   on401: UnauthorizedBehavior;
 }) => QueryFunction<T> =
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
-    let token = getAccessToken();
-    
-    const headers: HeadersInit = {};
-    if (token) {
-      headers.Authorization = `Bearer ${token}`;
-    }
-
-    let res = await fetch(queryKey.join("/") as string, {
-      headers,
-    });
-
-    // If we get a 401, try to refresh the token and retry the request
-    if (res.status === 401) {
-      const refreshed = await refreshTokens();
-      
-      if (refreshed) {
-        // Retry the request with the new token
-        const newToken = getAccessToken();
-        const retryHeaders: HeadersInit = {};
-        
-        if (newToken) {
-          retryHeaders.Authorization = `Bearer ${newToken}`;
-        }
-
-        res = await fetch(queryKey.join("/") as string, {
-          headers: retryHeaders,
-        });
-      }
-    }
-
-    // If still unauthorized after refresh attempt, redirect to login
-    if (res.status === 401) {
-      if (unauthorizedBehavior === "returnNull") {
-        return null;
-      } else {
-        redirectToLogin();
-        throw new Error('Unauthorized');
-      }
-    }
+    const url = queryKey.join("/"); // Assuming queryKey[0] is the base URL
+    const res = await authenticatedFetcher({ url, method: 'GET' });
 
     if (unauthorizedBehavior === "returnNull" && res.status === 401) {
       return null;
     }
 
-    await throwIfResNotOk(res);
+    // throwIfResNotOk is already called inside authenticatedFetcher
     return await res.json();
   };
 
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      queryFn: getQueryFn({ on401: "throw" }),
+      queryFn: async ({ queryKey }) => {
+        // Here, we use a simple fetch for the `me` endpoint in `useAuth` which handles its own 401.
+        // For all other queries, we use the authenticatedFetcher.
+        // This is a pragmatic approach to avoid circular dependencies or complex setup for `me` endpoint.
+        const url = queryKey.join("/");
+        const res = await authenticatedFetcher({ url, method: 'GET' });
+        await throwIfResNotOk(res); // authenticatedFetcher already throws for 401, so this catches other !res.ok
+        return await res.json();
+      },
       refetchInterval: false,
       refetchOnWindowFocus: false,
       staleTime: Infinity,
@@ -167,3 +132,4 @@ export const queryClient = new QueryClient({
     },
   },
 });
+

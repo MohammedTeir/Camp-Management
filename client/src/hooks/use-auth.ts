@@ -12,11 +12,11 @@ export function useAuth() {
     queryFn: async () => {
       const token = getAccessToken();
       if (!token) return null;
-      
+
       const headers: HeadersInit = {
         Authorization: `Bearer ${token}`
       };
-      
+
       const res = await fetch(api.auth.me.path, { headers });
       if (res.status === 401) return null;
       if (!res.ok) throw new Error("Failed to fetch user");
@@ -38,9 +38,9 @@ export function useAuth() {
         if (res.status === 401) throw new Error("Invalid username or password");
         throw new Error("Login failed");
       }
-      
+
       const data = await res.json();
-      
+
       // Store JWT tokens
       if (data.accessToken) {
         setAccessToken(data.accessToken);
@@ -48,17 +48,17 @@ export function useAuth() {
       if (data.refreshToken) {
         setRefreshToken(data.refreshToken);
       }
-      
+
       return data;
     },
     onSuccess: (data) => {
       // Update the user in the cache
       queryClient.setQueryData([api.auth.me.path], data);
-      toast({ title: "Welcome back!", description: `Logged in as ${data.firstName || data.username || 'User'}` });
+      toast({ title: "مرحباً بعودتك!", description: "تم تسجيل الدخول باسم " + ` ${data.firstName || data.username || "مستخدم"}` });
     },
     onError: (error) => {
       toast({
-        title: "Login failed",
+        title: "فشل تسجيل الدخول",
         description: error.message,
         variant: "destructive"
       });
@@ -71,7 +71,7 @@ export function useAuth() {
       await fetch(api.auth.logout.path, {
         method: api.auth.logout.method,
       });
-      
+
       // Remove JWT tokens from storage
       removeAccessToken();
       removeRefreshToken();
@@ -79,7 +79,7 @@ export function useAuth() {
     onSuccess: () => {
       queryClient.setQueryData([api.auth.me.path], null);
       queryClient.clear(); // Clear all data on logout
-      toast({ title: "Logged out", description: "See you next time!" });
+      toast({ title: "تم تسجيل الخروج", description: "نراك في المرة القادمة!" });
     }
   });
 

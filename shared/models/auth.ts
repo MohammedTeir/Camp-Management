@@ -19,7 +19,7 @@ export const users = pgTable("users", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   username: varchar("username").unique(), // Username for authentication
   password: varchar("password"), // Password field for JWT auth
-  role: text("role").default("admin").notNull(),
+  role: text("role").default("admin").notNull(), // Only admin role
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
