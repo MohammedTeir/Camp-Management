@@ -132,7 +132,8 @@ const EditPregnantWoman: React.FC = () => {
         description: "تم تحديث سجل المرأة الحامل بنجاح.",
       });
       queryClient.invalidateQueries({ queryKey: ["pregnantWoman", pregnantWomanId] }); // Invalidate single record cache
-      queryClient.invalidateQueries({ queryKey: ["pregnantWomen"] }); // Invalidate list cache
+      queryClient.invalidateQueries({ queryKey: [api.pregnantWomen.list.path] }); // Use consistent query key with the hook
+      queryClient.invalidateQueries({ queryKey: ["pregnantWomenLookup"] }); // Invalidate lookup queries
       setLocation("/pregnant-women"); // Redirect to list
     },
     onError: (error) => {

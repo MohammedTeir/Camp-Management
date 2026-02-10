@@ -12,8 +12,8 @@ export const camps = pgTable("camps", {
 
 export const children = pgTable("children", {
   id: serial("id").primaryKey(),
+  idNumber: text("id_number").notNull().unique(), // Unique identifier
   fullName: text("full_name").notNull(),
-  idNumber: text("id_number").notNull(), // Unique identifier
   dateOfBirth: text("date_of_birth").notNull(), // Storing as ISO string for simplicity
   gender: text("gender").notNull(),
   healthStatus: text("health_status").notNull(),
@@ -32,8 +32,8 @@ export const children = pgTable("children", {
 
 export const pregnantWomen = pgTable("pregnant_women", {
   id: serial("id").primaryKey(),
+  idNumber: text("id_number").notNull().unique(), // Unique identifier
   fullName: text("full_name").notNull(),
-  idNumber: text("id_number").notNull(), // Unique identifier
   dateOfBirth: text("date_of_birth"), // New field
   healthStatus: text("health_status").notNull(),
   pregnancyMonth: integer("pregnancy_month").notNull(),

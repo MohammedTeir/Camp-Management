@@ -58,7 +58,7 @@ import {
   Camp,
 } from "@shared/schema";
 import { api, buildUrl } from "@shared/routes";
-import { Loader2, Edit2, Trash2 } from "lucide-react";
+import { Loader2, Edit2 } from "lucide-react";
 
 // Zod schemas for lookup forms
 const childLookupSchema = z.object({
@@ -80,11 +80,9 @@ const LookupHousehold: React.FC = () => {
 
   const [isEditChildDialogOpen, setIsEditChildDialogOpen] = useState(false);
   const [editingChild, setEditingChild] = useState<Child | null>(null);
-  const [childToDelete, setChildToDelete] = useState<number | null>(null);
 
   const [isEditPregnantWomanDialogOpen, setIsEditPregnantWomanDialogOpen] = useState(false);
   const [editingPregnantWoman, setEditingPregnantWoman] = useState<PregnantWoman | null>(null);
-  const [pregnantWomanToDelete, setPregnantWomanToDelete] = useState<number | null>(null);
 
   const childLookupForm = useForm<z.infer<typeof childLookupSchema>>({
     resolver: zodResolver(childLookupSchema),
@@ -203,31 +201,6 @@ const LookupHousehold: React.FC = () => {
     },
   });
 
-  // Delete Child Mutation
-  const deleteChildMutation = useMutation({
-    mutationFn: async (id: number) => {
-      const headers: HeadersInit = {
-        "X-Requested-With": "XMLHttpRequest" // Indicate this is an AJAX request
-      };
-      
-      const response = await fetch(buildUrl(api.children.publicDelete.path, { id }), {
-        method: api.children.publicDelete.method,
-        headers
-      });
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "فشل حذف سجل الطفل.");
-      }
-    },
-    onSuccess: () => {
-      toast({ title: "تم بنجاح", description: "تم حذف سجل الطفل بنجاح." });
-      queryClient.invalidateQueries({ queryKey: ["childrenLookup", childParentId] });
-      setChildToDelete(null);
-    },
-    onError: (error) => {
-      toast({ title: "خطأ", description: error.message || "حدث خطأ غير متوقع.", variant: "destructive" });
-    },
-  });
 
   // Update Pregnant Woman Mutation
   const updatePregnantWomanMutation = useMutation({
@@ -261,31 +234,6 @@ const LookupHousehold: React.FC = () => {
     },
   });
 
-  // Delete Pregnant Woman Mutation
-  const deletePregnantWomanMutation = useMutation({
-    mutationFn: async (id: number) => {
-      const headers: HeadersInit = {
-        "X-Requested-With": "XMLHttpRequest" // Indicate this is an AJAX request
-      };
-      
-      const response = await fetch(buildUrl(api.pregnantWomen.publicDelete.path, { id }), {
-        method: api.pregnantWomen.publicDelete.method,
-        headers
-      });
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "فشل حذف سجل المرأة الحامل.");
-      }
-    },
-    onSuccess: () => {
-      toast({ title: "تم بنجاح", description: "تم حذف سجل المرأة الحامل بنجاح." });
-      queryClient.invalidateQueries({ queryKey: ["pregnantWomanLookup", pregnantWomanSpouseId] });
-      setPregnantWomanToDelete(null);
-    },
-    onError: (error) => {
-      toast({ title: "خطأ", description: error.message || "حدث خطأ غير متوقع.", variant: "destructive" });
-    },
-  });
 
   const onChildLookupSubmit = (data: z.infer<typeof childLookupSchema>) => {
     setChildParentId(data.parentId);
@@ -670,25 +618,7 @@ const LookupHousehold: React.FC = () => {
                           </DialogContent>
                         </Dialog>
 
-                        <AlertDialog open={childToDelete === record.id} onOpenChange={(open) => !open && setChildToDelete(null)}>
-                          <AlertDialogTrigger asChild>
-                            <Button variant="destructive" size="sm" onClick={() => setChildToDelete(record.id)}>
-                              <Trash2 className="h-4 w-4" /> حذف
-                            </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>هل أنت متأكد تمامًا؟</AlertDialogTitle>
-                              <AlertDialogDescription>
-                                لا يمكن التراجع عن هذا الإجراء. سيؤدي هذا إلى حذف سجل الطفل بشكل دائم.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>إلغاء</AlertDialogCancel>
-                              <AlertDialogAction onClick={() => deleteChildMutation.mutate(record.id)} className="bg-red-600">حذف</AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
+                        {/* Delete button removed as requested */}
                       </TableCell>
                     </TableRow>
                   ))}
@@ -898,25 +828,7 @@ const LookupHousehold: React.FC = () => {
                             </Form>
                           </DialogContent>
                         </Dialog>
-                        <AlertDialog open={pregnantWomanToDelete === record.id} onOpenChange={(open) => !open && setPregnantWomanToDelete(null)}>
-                          <AlertDialogTrigger asChild>
-                            <Button variant="destructive" size="sm" onClick={() => setPregnantWomanToDelete(record.id)}>
-                              <Trash2 className="h-4 w-4" /> حذف
-                            </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>هل أنت متأكد تمامًا؟</AlertDialogTitle>
-                              <AlertDialogDescription>
-                                لا يمكن التراجع عن هذا الإجراء. سيؤدي هذا إلى حذف سجل المرأة الحامل بشكل دائم.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>إلغاء</AlertDialogCancel>
-                              <AlertDialogAction onClick={() => deletePregnantWomanMutation.mutate(record.id)} className="bg-red-600">حذف</AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
+                        {/* Delete button removed as requested */}
                       </TableCell>
                     </TableRow>
                   ))}

@@ -135,6 +135,16 @@ async function processExcelFile<T>(
       let errorMessage = `Row ${i}: `;
       if (err instanceof z.ZodError) {
         errorMessage += err.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', ');
+      } else if (err.message.includes("يوجد طفل مسجل مسبقاً") || err.message.includes("يوجد امرأة حامل مسجلة مسبقاً")) {
+        errorMessage += err.message;
+      } else if (err.message.includes('duplicate key value violates unique constraint') || err.message.includes('UNIQUE constraint failed')) {
+        if (schema === insertChildSchema) {
+          errorMessage += "يوجد طفل مسجل مسبقاً برقم الهوية هذا";
+        } else if (schema === insertPregnantWomanSchema) {
+          errorMessage += "يوجد امرأة حامل مسجلة مسبقاً برقم الهوية هذا";
+        } else {
+          errorMessage += err.message;
+        }
       } else {
         errorMessage += err.message;
       }
@@ -237,6 +247,14 @@ export async function registerRoutes(
           message: err.errors[0].message,
           field: err.errors[0].path.join('.'),
         });
+      }
+      // Handle duplicate entry error
+      if (err instanceof Error && err.message.includes("يوجد طفل مسجل مسبقاً")) {
+        return res.status(409).json({ message: err.message });
+      }
+      // Check for database unique constraint violation
+      if (err instanceof Error && (err.message.includes('duplicate key value violates unique constraint') || err.message.includes('UNIQUE constraint failed'))) {
+        return res.status(409).json({ message: "يوجد طفل مسجل مسبقاً برقم الهوية هذا" });
       }
       res.status(500).json({ message: "خطأ داخلي في الخادم" });
     }
@@ -385,6 +403,14 @@ export async function registerRoutes(
           message: err.errors[0].message,
           field: err.errors[0].path.join('.'),
         });
+      }
+      // Handle duplicate entry error
+      if (err instanceof Error && err.message.includes("يوجد امرأة حامل مسجلة مسبقاً")) {
+        return res.status(409).json({ message: err.message });
+      }
+      // Check for database unique constraint violation
+      if (err instanceof Error && (err.message.includes('duplicate key value violates unique constraint') || err.message.includes('UNIQUE constraint failed'))) {
+        return res.status(409).json({ message: "يوجد امرأة حامل مسجلة مسبقاً برقم الهوية هذا" });
       }
       res.status(500).json({ message: "خطأ داخلي في الخادم" });
     }

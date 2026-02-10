@@ -77,7 +77,8 @@ const AddPregnantWoman: React.FC = () => {
         title: "نجاح!",
         description: "تمت إضافة سجل السيدة الحامل بنجاح.",
       });
-      queryClient.invalidateQueries({ queryKey: ["pregnantWomen"] });
+      queryClient.invalidateQueries({ queryKey: [api.pregnantWomen.list.path] }); // Use consistent query key with the hook
+      queryClient.invalidateQueries({ queryKey: ["pregnantWomenLookup"] }); // Invalidate lookup queries
       setLocation("/pregnant-women");
     },
     onError: (error) => {

@@ -31,9 +31,33 @@ import {
 } from "@shared/schema";
 import { api } from "@shared/routes";
 
-// Extend schemas for client-side validation if needed, e.g., for select fields
-const childFormSchema = insertChildSchema;
-const pregnantWomanFormSchema = insertPregnantWomanSchema;
+// Enhanced validation schemas for client-side validation
+const childFormSchema = insertChildSchema.extend({
+  fullName: z.string().min(1, "اسم الطفل مطلوب"),
+  idNumber: z.string().min(1, "رقم هوية الطفل مطلوب"),
+  dateOfBirth: z.string().min(1, "تاريخ ميلاد الطفل مطلوب"),
+  gender: z.enum(["male", "female"], { 
+    errorMap: () => ({ message: "الجنس مطلوب" })
+  }),
+  healthStatus: z.string().min(1, "حالة الطفل مطلوبة"),
+  fatherName: z.string().min(1, "اسم الاب مطلوب"),
+  fatherId: z.string().min(1, "رقم هوية الاب مطلوب"),
+  motherName: z.string().min(1, "اسم الام مطلوب"),
+  motherId: z.string().min(1, "رقم هوية الام مطلوب"),
+  contactNumber: z.string().min(1, "رقم التواصل مطلوب"),
+  campId: z.number().int().positive("مكان النزوح مطلوب"),
+});
+
+const pregnantWomanFormSchema = insertPregnantWomanSchema.extend({
+  fullName: z.string().min(1, "اسم المرأة الحامل مطلوب"),
+  idNumber: z.string().min(1, "رقم هوية المرأة مطلوب"),
+  healthStatus: z.string().min(1, "حالة المرأة مطلوبة"),
+  pregnancyMonth: z.number().int().min(1).max(9, "يجب أن يكون شهر الحمل بين 1 و 9"),
+  spouseName: z.string().min(1, "اسم الزوج مطلوب"),
+  spouseId: z.string().min(1, "رقم هوية الزوج مطلوب"),
+  contactNumber: z.string().min(1, "رقم التواصل مطلوب"),
+  campId: z.number().int().positive("مكان النزوح مطلوب"),
+});
 
 const RegisterHousehold: React.FC = () => {
   const [activeTab, setActiveTab] = useState("child");

@@ -91,6 +91,16 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createChild(child: InsertChild): Promise<Child> {
+    // Check if a child with the same ID number already exists
+    const existingChild = await db
+      .select()
+      .from(children)
+      .where(eq(children.idNumber, child.idNumber));
+      
+    if (existingChild.length > 0) {
+      throw new Error("يوجد طفل مسجل مسبقاً برقم الهوية هذا");
+    }
+    
     const [newChild] = await db.insert(children).values(child).returning();
     return newChild;
   }
@@ -128,6 +138,16 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createPregnantWoman(woman: InsertPregnantWoman): Promise<PregnantWoman> {
+    // Check if a pregnant woman with the same ID number already exists
+    const existingWoman = await db
+      .select()
+      .from(pregnantWomen)
+      .where(eq(pregnantWomen.idNumber, woman.idNumber));
+      
+    if (existingWoman.length > 0) {
+      throw new Error("يوجد امرأة حامل مسجلة مسبقاً برقم الهوية هذا");
+    }
+    
     const [newWoman] = await db.insert(pregnantWomen).values(woman).returning();
     return newWoman;
   }

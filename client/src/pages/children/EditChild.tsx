@@ -139,7 +139,8 @@ const EditChild: React.FC = () => {
         description: "تم تحديث سجل الطفل بنجاح.",
       });
       queryClient.invalidateQueries({ queryKey: ["child", childId] }); // Invalidate single child cache
-      queryClient.invalidateQueries({ queryKey: ["children"] }); // Invalidate children list cache
+      queryClient.invalidateQueries({ queryKey: [api.children.list.path] }); // Use consistent query key with the hook
+      queryClient.invalidateQueries({ queryKey: ["childrenLookup"] }); // Invalidate lookup queries
       setLocation("/children"); // Redirect to children list
     },
     onError: (error) => {

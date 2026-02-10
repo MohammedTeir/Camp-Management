@@ -84,7 +84,8 @@ const AddChild: React.FC = () => {
         title: "نجاح!",
         description: "تمت إضافة سجل الطفل بنجاح.",
       });
-      queryClient.invalidateQueries({ queryKey: ["children"] });
+      queryClient.invalidateQueries({ queryKey: [api.children.list.path] }); // Use consistent query key with the hook
+      queryClient.invalidateQueries({ queryKey: ["childrenLookup"] }); // Invalidate lookup queries
       setLocation("/children");
     },
     onError: (error) => {
