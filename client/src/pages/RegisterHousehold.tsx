@@ -435,7 +435,7 @@ const RegisterHousehold: React.FC = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>مكان النزوح</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value?.toString()}>
+                    <Select onValueChange={(val) => field.onChange(parseInt(val))} value={field.value?.toString()}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="اختر مكان النزوح" />
