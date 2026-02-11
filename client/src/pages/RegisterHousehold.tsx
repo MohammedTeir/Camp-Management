@@ -142,8 +142,8 @@ const RegisterHousehold: React.FC = () => {
     },
     onSuccess: () => {
       toast({
-        title: "Success!",
-        description: "Child record registered successfully.",
+        title: "نجاح!",
+        description: "تم تسجيل بيانات الطفل بنجاح.",
       });
       childForm.reset();
     },
@@ -180,8 +180,8 @@ const RegisterHousehold: React.FC = () => {
     },
     onSuccess: () => {
       toast({
-        title: "Success!",
-        description: "Pregnant woman record registered successfully.",
+        title: "نجاح!",
+        description: "تم تسجيل بيانات المرأة الحامل بنجاح.",
       });
       pregnantWomanForm.reset();
     },
